@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS testla;
+USE testla;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS charging_session;
+DROP TABLE IF EXISTS reservation;
+DROP TABLE IF EXISTS charging_port;
+DROP TABLE IF EXISTS charging_hub;
+DROP TABLE IF EXISTS vehicle;
+DROP TABLE IF EXISTS driver;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- TODO: finish the DDL below.
