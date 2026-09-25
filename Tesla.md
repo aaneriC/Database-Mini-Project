@@ -1,9 +1,3 @@
-'''mermaid
-
-
-
-
-
     %% =========================================================
     %% Driver
     %% =========================================================
@@ -166,5 +160,3 @@
     classDef keyAttribute fill:#FFF2CC,stroke:#BF9000,stroke-width:1px,color:#000;
     classDef attribute fill:#F2F2F2,stroke:#666,stroke-width:1px,color:#000;
     classDef relationship fill:#E2F0D9,stroke:#548235,stroke-width:2px,color:#000;
-
-    '''
