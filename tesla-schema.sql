@@ -12,4 +12,27 @@ DROP TABLE IF EXISTS driver;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- TODO: finish the DDL below.
+-- =============================================================
+-- 1. DRIVER
+-- =============================================================
+CREATE TABLE driver
+(
+    driver_id INT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    membership_tier VARCHAR(10) NOT NULL,
+    created_at DATE NOT NULL,
+
+    CONSTRAINT check_membership_tier
+        CHECK (membership_tier IN ('STANDARD', 'PREMIUM'))
+);
+
+-- -------------------------------------------------------------
+-- Verification commands
+-- -------------------------------------------------------------
+USE testla;
+SHOW TABLES;
+SHOW CREATE TABLE driver;
+
+
+
