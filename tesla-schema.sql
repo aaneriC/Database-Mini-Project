@@ -27,12 +27,38 @@ CREATE TABLE driver
         CHECK (membership_tier IN ('STANDARD', 'PREMIUM'))
 );
 
+-- =============================================================
+-- 2. VEHICLE
+-- =============================================================
+CREATE TABLE vehicle
+(
+    vehicle_id INT PRIMARY KEY NOT NULL,
+    driver_id INT NOT NULL,
+    vin CHAR(17) NOT NULL UNIQUE,
+    model VARCHAR(50) NOT NULL,
+    model_year SMALLINT NOT NULL,
+    battery_capacity_kwh DECIMAL(6, 2) NOT NULL,
+
+    CONSTRAINT check_vehicle_vin
+        CHECK (CHAR_LENGTH(vin) = 17),
+    
+    CONSTRAINT check_model_year
+        CHECK (model_year BETWEEN 2000 AND 2100),
+
+    CONSTRAINT check_battery_capacity
+        CHECK (battery_capacity_kwh > 0),
+    
+    CONSTRAINT fk_vehicle_driver
+        FOREIGN KEY (driver_id)
+        REFERENCES driver(driver_id)
+        ON DELETE RESTRICT
+);
+
+
 -- -------------------------------------------------------------
 -- Verification commands
 -- -------------------------------------------------------------
 USE testla;
 SHOW TABLES;
 SHOW CREATE TABLE driver;
-
-
 
