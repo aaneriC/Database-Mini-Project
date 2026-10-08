@@ -75,11 +75,14 @@ CREATE TABLE charging_hub
 CREATE TABLE charging_port
 (
     port_id INT PRIMARY KEY NOT NULL, 
-    hub_id INT NOT NULL UNIQUE, 
-    port_number INT NOT NULL UNIQUE, 
+    hub_id INT NOT NULL, 
+    port_number INT NOT NULL, 
     connector_type VARCHAR(10) NOT NULL, 
     max_power_kw DECIMAL(6, 2) NOT NULL, 
     port_status VARCHAR(20) NOT NULL,
+
+    CONSTRAINT unique_hub_port
+        UNIQUE (hub_id, port_number),
 
     CONSTRAINT check_port_number
         CHECK (port_number > 0),
@@ -99,6 +102,87 @@ CREATE TABLE charging_port
         ON DELETE RESTRICT
 );
 
+-- =============================================================
+-- 5. RESERVATION
+-- =============================================================
+CREATE TABLE reservation
+(
+    reservation_id INT PRIMARY KEY NOT NULL, 
+    vehicle_id INT NOT NULL, 
+    port_id INT NOT NULL,
+    reserved_start DATETIME NOT NULL, 
+    reserved_end DATETIME NOT NULL, 
+    reservation_status VARCHAR(12) NOT NULL, 
+
+    CONSTRAINT check_reservation_dates 
+        CHECK (reserved_end > reserved_start),
+    
+    CONSTRAINT check_reservation_status
+        CHECK (reservation_status IN ('BOOKED', 'COMPLETED', 'CANCELLED', 'NO_SHOW')),
+    
+    CONSTRAINT fk_reservation_vehicle
+        FOREIGN KEY (vehicle_id)
+        REFERENCES vehicle(vehicle_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_reservation_port
+        FOREIGN KEY (port_id)
+        REFERENCES charging_port(port_id)
+        ON DELETE RESTRICT
+);
+
+-- =============================================================
+-- 6. CHARGING SESSION
+-- =============================================================
+CREATE TABLE charging_session
+(
+    session_id INT PRIMARY KEY NOT NULL, 
+    vehicle_id INT NOT NULL, 
+    port_id INT NOT NULL, 
+    reservation_id INT NULL UNIQUE,
+    started_at DATETIME NOT NULL, 
+    ended_at DATETIME NULL, 
+    energy_kwh DECIMAL(7, 2) NOT NULL, 
+    total_cost DECIMAL(8, 2) NOT NULL, 
+    session_status VARCHAR(12) NOT NULL,
+
+    CONSTRAINT check_charging_energy
+        CHECK (energy_kwh >= 0),
+    
+    CONSTRAINT check_total_cost
+        CHECK (total_cost >= 0),
+    
+    CONSTRAINT check_session_status
+        CHECK (session_status IN('IN_PROGRESS', 'COMPLETED', 'INTERRUPTED')),
+    
+    CONSTRAINT check_session_end_time
+        CHECK
+        (
+            (session_status = 'IN_PROGRESS' AND ended_at IS NULL)
+            OR
+            (
+                session_status IN ('COMPLETED', 'INTERRUPTED')
+                AND ended_at IS NOT NULL
+                AND ended_at > started_at
+            )
+        ),
+
+    CONSTRAINT fk_session_vehicle
+        FOREIGN KEY (vehicle_id)
+        REFERENCES vehicle(vehicle_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_session_port
+        FOREIGN KEY (port_id)
+        REFERENCES charging_port(port_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_session_reservation
+        FOREIGN KEY (reservation_id)
+        REFERENCES reservation(reservation_id)
+        ON DELETE RESTRICT
+);
+
 -- -------------------------------------------------------------
 -- Verification commands    
 -- -------------------------------------------------------------
@@ -106,4 +190,7 @@ USE testla;
 SHOW TABLES;
 SHOW CREATE TABLE driver;
 SHOW CREATE TABLE vehicle;
-
+SHOW CREATE TABLE charging_hub;
+SHOW CREATE TABLE charging_port;
+SHOW CREATE TABLE reservation;
+SHOW CREATE TABLE charging_session;
