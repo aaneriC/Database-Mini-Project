@@ -54,11 +54,56 @@ CREATE TABLE vehicle
         ON DELETE RESTRICT
 );
 
+-- =============================================================
+-- 3. CHARGING HUB
+-- =============================================================
+CREATE TABLE charging_hub
+(
+    hub_id INT PRIMARY KEY NOT NULL,
+    hub_name VARCHAR(100) NOT NULL,
+    city VARCHAR(80) NOT NULL,
+    state CHAR(2) NOT NULL,
+    hub_status VARCHAR(20) NOT NULL,
+
+    CONSTRAINT check_charging_hub
+        CHECK (hub_status IN ('ACTIVE', 'MAINTENANCE', 'CLOSED'))
+);
+
+-- =============================================================
+-- 4. CHARGING PORT
+-- =============================================================
+CREATE TABLE charging_port
+(
+    port_id INT PRIMARY KEY NOT NULL, 
+    hub_id INT NOT NULL UNIQUE, 
+    port_number INT NOT NULL UNIQUE, 
+    connector_type VARCHAR(10) NOT NULL, 
+    max_power_kw DECIMAL(6, 2) NOT NULL, 
+    port_status VARCHAR(20) NOT NULL,
+
+    CONSTRAINT check_port_number
+        CHECK (port_number > 0),
+    
+    CONSTRAINT check_max_power
+        CHECK (max_power_kw >= 0),
+
+    CONSTRAINT  check_connector_type
+        CHECK (connector_type IN ('NACS', 'CCS')),
+
+    CONSTRAINT check_port_status
+        CHECK (port_status IN ('AVAILABLE', 'CHARGING', 'OUT_OF_SERVICE')),
+
+    CONSTRAINT fk_charging_hub
+        FOREIGN KEY (hub_id)
+        REFERENCES charging_hub(hub_id)
+        ON DELETE RESTRICT
+);
 
 -- -------------------------------------------------------------
--- Verification commands
+-- Verification commands    
 -- -------------------------------------------------------------
 USE testla;
 SHOW TABLES;
 SHOW CREATE TABLE driver;
+SHOW CREATE TABLE vehicle;
 
