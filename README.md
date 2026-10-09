@@ -1,6 +1,7 @@
 # Database-Mini-Project
 This project models a smart electric vehicle charging network. The database manages drivers, vehicles, charging hubs, charging ports, reservations, and charging sessions. It supports tracking charging activity, monitoring port availability, and connecting reservations to completed charging sessions.
 
-<img width="5470" height="2988" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/45c28ea7-31ae-49e3-b3f3-12a509e02a7f" />
+<img width="8604" height="2744" alt="image" src="https://github.com/user-attachments/assets/54c7baf8-4acd-42f7-bb78-4bc029b6b532" />
+
 
 Authors: Christian Ruelas, Changwe Musonda, Cirena Arabit
